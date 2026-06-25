@@ -1,0 +1,15 @@
+# Hardware tier -> local models (served by Ollama).
+# Tiers are checked top-down; first one whose min_vram_gb fits wins, else `cpu`.
+embeddings: nomic-embed-text   # 768 dims — must match vector(768) in the schema
+tiers:
+  gpu_24:
+    min_vram_gb: 20
+    chat: qwen3:32b
+  gpu_16:
+    min_vram_gb: 12
+    chat: qwen3:14b
+  gpu_8:
+    min_vram_gb: 6
+    chat: qwen3:8b
+  cpu:
+    chat: qwen3:4b
