@@ -1,0 +1,64 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch: {}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: agentic
+          POSTGRES_PASSWORD: agentic
+          POSTGRES_DB: agentic
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U agentic" --health-interval 5s
+          --health-timeout 3s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync
+      - run: uv run ruff check .
+      - run: uv run pytest -q
+
+  # Full quality gate with the local judge model. Hosted runners have no GPU, so this
+  # runs the `cpu` tier and only on manual dispatch (or a self-hosted GPU runner).
+  eval-gate:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: agentic
+          POSTGRES_PASSWORD: agentic
+          POSTGRES_DB: agentic
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U agentic" --health-interval 5s
+          --health-timeout 3s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+    env:
+      MODEL_TIER: cpu
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync
+      - run: curl -fsSL https://ollama.com/install.sh | sh
+      - run: ollama serve & sleep 3
+      - run: uv run alembic upgrade head
+      - run: uv run python -m scripts.pull_models
+      - run: uv run python -m scripts.fetch_data
+      - run: uv run python -m scripts.seed
+      - run: uv run python -m evals.run_offline --gate

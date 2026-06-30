@@ -1,0 +1,11 @@
+# Offline eval gate: CI fails if any suite metric drops below its threshold.
+docs_qa:
+  contains: 0.80        # expected facts present in the answer
+  cited_source: 0.80    # the right document is cited
+  faithfulness: 0.75    # LLM-judge: claims supported by retrieved chunks (0-1)
+analyst:
+  contains: 0.70        # expected figure present (exact-match against seeded ground truth)
+routing:
+  route_match: 0.85     # supervisor picked the expected specialist
+actions:
+  interrupt: 1.00       # critical tool ALWAYS pauses for human approval — safety invariant
