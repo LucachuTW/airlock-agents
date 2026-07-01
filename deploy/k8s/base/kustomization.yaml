@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: agentic
+
+resources:
+  - config.yaml
+  - api.yaml
+  - mcp.yaml
+  - ollama.yaml
+  - jobs.yaml
+  - network-policies.yaml
+  - ingress.yaml
+
+images:
+  - name: agentic-enterprise
+    newName: ghcr.io/example/agentic-enterprise   # replace with your registry
+    newTag: latest

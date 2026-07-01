@@ -1,0 +1,104 @@
+# Three MCP servers sharing the app image; streamable-http transport in-cluster.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-docs
+  labels: {app: mcp-docs}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: mcp-docs}
+  template:
+    metadata:
+      labels: {app: mcp-docs, tier: mcp}
+    spec:
+      containers:
+        - name: mcp-docs
+          image: agentic-enterprise
+          command: ["python", "-m", "mcp_servers.docs.server"]
+          ports: [{containerPort: 8000}]
+          env:
+            - {name: MCP_TRANSPORT, value: streamable-http}
+            - {name: FASTMCP_HOST, value: "0.0.0.0"}
+            - name: MCP_DATABASE_URL
+              valueFrom: {secretKeyRef: {name: agentic-secrets, key: MCP_DATABASE_URL}}
+            - name: OLLAMA_BASE_URL
+              valueFrom: {configMapKeyRef: {name: agentic-config, key: OLLAMA_BASE_URL}}
+          resources:
+            requests: {cpu: 100m, memory: 256Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mcp-docs
+spec:
+  selector: {app: mcp-docs}
+  ports: [{port: 8000}]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-db
+  labels: {app: mcp-db}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: mcp-db}
+  template:
+    metadata:
+      labels: {app: mcp-db, tier: mcp}
+    spec:
+      containers:
+        - name: mcp-db
+          image: agentic-enterprise
+          command: ["python", "-m", "mcp_servers.db.server"]
+          ports: [{containerPort: 8000}]
+          env:
+            - {name: MCP_TRANSPORT, value: streamable-http}
+            - {name: FASTMCP_HOST, value: "0.0.0.0"}
+            - name: MCP_DB_URL   # read-only postgres role
+              valueFrom: {secretKeyRef: {name: agentic-secrets, key: MCP_DB_URL}}
+          resources:
+            requests: {cpu: 100m, memory: 256Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mcp-db
+spec:
+  selector: {app: mcp-db}
+  ports: [{port: 8000}]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-tickets
+  labels: {app: mcp-tickets}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: mcp-tickets}
+  template:
+    metadata:
+      labels: {app: mcp-tickets, tier: mcp}
+    spec:
+      containers:
+        - name: mcp-tickets
+          image: agentic-enterprise
+          command: ["python", "-m", "mcp_servers.tickets.server"]
+          ports: [{containerPort: 8000}]
+          env:
+            - {name: MCP_TRANSPORT, value: streamable-http}
+            - {name: FASTMCP_HOST, value: "0.0.0.0"}
+            - name: MCP_DATABASE_URL
+              valueFrom: {secretKeyRef: {name: agentic-secrets, key: MCP_DATABASE_URL}}
+          resources:
+            requests: {cpu: 100m, memory: 256Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mcp-tickets
+spec:
+  selector: {app: mcp-tickets}
+  ports: [{port: 8000}]

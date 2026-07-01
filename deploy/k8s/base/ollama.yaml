@@ -1,0 +1,49 @@
+# Local model serving. One replica per GPU node; vLLM is the drop-in upgrade at scale
+# (same OpenAI-compatible interface — only OLLAMA_BASE_URL changes).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama
+  labels: {app: ollama}
+spec:
+  replicas: 1
+  strategy: {type: Recreate}   # single GPU: never two pods at once
+  selector:
+    matchLabels: {app: ollama}
+  template:
+    metadata:
+      labels: {app: ollama}
+    spec:
+      nodeSelector:
+        nvidia.com/gpu.present: "true"
+      containers:
+        - name: ollama
+          image: ollama/ollama:latest
+          ports: [{containerPort: 11434}]
+          env:
+            - {name: OLLAMA_NUM_PARALLEL, value: "2"}
+          volumeMounts:
+            - {name: models, mountPath: /root/.ollama}
+          resources:
+            limits:
+              nvidia.com/gpu: 1
+      volumes:
+        - name: models
+          persistentVolumeClaim: {claimName: ollama-models}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ollama-models
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests: {storage: 30Gi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama
+spec:
+  selector: {app: ollama}
+  ports: [{port: 11434}]

@@ -1,0 +1,38 @@
+# Run migrations before each rollout (or hook it into your CD tool).
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migrate
+spec:
+  backoffLimit: 2
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: agentic-enterprise
+          command: ["alembic", "upgrade", "head"]
+          envFrom:
+            - configMapRef: {name: agentic-config}
+            - secretRef: {name: agentic-secrets}
+---
+# Online evaluation: judge a sample of recent production runs with the local model.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: online-eval
+spec:
+  schedule: "0 3 * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: online-eval
+              image: agentic-enterprise
+              command: ["python", "-m", "evals.run_online", "--hours", "24", "--sample", "20"]
+              envFrom:
+                - configMapRef: {name: agentic-config}
+                - secretRef: {name: agentic-secrets}

@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agentic-config
+data:
+  # In K8s the API container has no GPU visibility — hardware auto-detection is a
+  # single-host dev feature. Pin the tier to what the Ollama node actually serves.
+  MODEL_TIER: gpu_8
+  OLLAMA_BASE_URL: http://ollama:11434
+  REDIS_URL: redis://redis:6379/0
+  MCP_HTTP_DOCS: http://mcp-docs:8000/mcp
+  MCP_HTTP_DB: http://mcp-db:8000/mcp
+  MCP_HTTP_TICKETS: http://mcp-tickets:8000/mcp
+---
+# Dev-only placeholder. In a real cluster use SealedSecrets / external-secrets.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: agentic-secrets
+stringData:
+  DATABASE_URL: postgresql+asyncpg://agentic:agentic@postgres:5432/agentic
+  MCP_DATABASE_URL: postgresql://agentic:agentic@postgres:5432/agentic
+  MCP_DB_URL: postgresql://mcp_readonly:mcp_readonly@postgres:5432/agentic
+  JWT_SECRET: change-me-in-production-0123456789abcdef

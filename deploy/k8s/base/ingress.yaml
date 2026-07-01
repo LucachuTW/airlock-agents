@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"  # SSE streams
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts: [agentic.example.com]
+      secretName: agentic-tls
+  rules:
+    - host: agentic.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service: {name: api, port: {number: 80}}
