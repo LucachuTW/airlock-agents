@@ -2,8 +2,6 @@
 
 A production-grade multi-agent platform where AI agents resolve real enterprise workflows — answering questions over internal docs, querying databases, and proposing actions — under **role-based permissions, human approval gates, full audit trails, and continuous evaluation**.
 
-Built to demonstrate senior-level applied AI engineering: LLMOps, security, evaluation, traceability, and production deployment.
-
 > Full technical design: [docs/DESIGN.md](docs/DESIGN.md)
 
 ## What it does
