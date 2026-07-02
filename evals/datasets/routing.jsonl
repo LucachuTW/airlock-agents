@@ -1,0 +1,12 @@
+{"input": "What's the policy for taking more than 25 consecutive days off?", "expected": {"route": "docs_qa"}}
+{"input": "¿Puedo pasar como gasto una compra de hace 4 meses?", "expected": {"route": "docs_qa"}}
+{"input": "Which password manager should I use for my work accounts?", "expected": {"route": "docs_qa"}}
+{"input": "Who acts as communications lead during an incident?", "expected": {"route": "docs_qa"}}
+{"input": "Give me a breakdown of revenue by country.", "expected": {"route": "analyst"}}
+{"input": "¿Cuántas facturas canceladas hay en el dataset?", "expected": {"route": "analyst"}}
+{"input": "Which products sold the most units overall?", "expected": {"route": "analyst"}}
+{"input": "Show me the monthly invoice volume trend for 2011.", "expected": {"route": "analyst"}}
+{"input": "Open a ticket to rotate the staging database credentials.", "expected": {"route": "actions"}}
+{"input": "Crea un ticket para renovar el certificado TLS de la web pública, prioridad alta.", "expected": {"route": "actions"}}
+{"input": "Please file a request to add SSO support to the admin panel.", "expected": {"route": "actions"}}
+{"input": "I need a ticket for upgrading the CI runners to Ubuntu 24.04.", "expected": {"route": "actions"}}

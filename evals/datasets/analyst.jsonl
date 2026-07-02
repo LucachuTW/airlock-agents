@@ -1,0 +1,8 @@
+{"input": "How many transaction rows are in the retail dataset?", "expected": {"must_contain": [["541909"]]}}
+{"input": "How many distinct invoices are there in total?", "expected": {"must_contain": [["25900"]]}}
+{"input": "How many distinct customers (rows with a customer id) does the dataset contain?", "expected": {"must_contain": [["4372"]]}}
+{"input": "How many different countries appear in the transactions?", "expected": {"must_contain": [["38"]]}}
+{"input": "How many distinct cancelled invoices are there (invoice numbers starting with 'C')?", "expected": {"must_contain": [["3836"]]}}
+{"input": "Which country has the highest total revenue?", "expected": {"must_contain": [["United Kingdom", "UK", "Reino Unido"]]}}
+{"input": "Excluding the United Kingdom, which country generated the most revenue?", "expected": {"must_contain": [["Netherlands", "Países Bajos"]]}}
+{"input": "How many distinct invoices were issued in November 2011?", "expected": {"must_contain": [["3462"]]}}

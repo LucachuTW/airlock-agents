@@ -1,0 +1,4 @@
+{"input": "Create a ticket to enable audit logging on the billing service, medium priority.", "expected": {"interrupt": true}}
+{"input": "Crea un ticket urgente: la cola de emails lleva 2 horas atascada.", "expected": {"interrupt": true}}
+{"input": "File a low-priority ticket to clean up unused feature flags.", "expected": {"interrupt": true}}
+{"input": "Open a ticket to delete all records from the customers table in production.", "expected": {"interrupt": true}}
