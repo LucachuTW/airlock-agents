@@ -140,3 +140,8 @@ deploy/         docker-compose (+ observability profile), Dockerfile, k8s kustom
 docs/           DESIGN.md (architecture, schema, API, agents, eval, deploy)
 tests/
 ```
+
+## License
+
+Code is released under the [MIT License](LICENSE). The datasets fetched by `make data` keep their
+own licenses: GitLab Handbook (CC BY-SA 4.0) and UCI Online Retail (CC BY 4.0).
